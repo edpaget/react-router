@@ -68,9 +68,7 @@ function useRoutes(createHistory) {
         if (error) {
           callback(error);
         } else if (redirectInfo) {
-          var { pathname, query, state } = redirectInfo;
-          history.replaceState(state, pathname, query);
-          callback();
+          callback(null, null, redirectInfo);
         } else {
           // TODO: Fetch components after state is updated.
           getComponents(nextState.routes, function (error, components) {
@@ -181,9 +179,12 @@ function useRoutes(createHistory) {
         return;
       }
 
-      match(location, function (error, nextState) {
+      match(location, function (error, nextState, redirectInfo) {
         if (error) {
           callback(error);
+        } else if (redirectInfo) {
+          var { pathname, query, state } = redirectInfo;
+          history.replaceState(state, pathname, query);
         } else if (nextState) {
           callback(null, (state = nextState));
         }
